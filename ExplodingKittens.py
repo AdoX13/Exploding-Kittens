@@ -108,9 +108,9 @@ class Deck():
         Card("Exploding Kitten","House")
         ]
         random.shuffle(exploding_list)
-        for _ in range (1,int(number_of_players) - 1):
+        for _ in range (1,int(number_of_players)):
             self.cards.append(exploding_list.pop())
-        self.shuffle()
+        #self.shuffle()
 
 
 class Player():
@@ -143,10 +143,13 @@ class Player():
             print(f"Nu ai cartea {specific_card} in mana!")
 
     def insertKitten(self, deck, kitten):
-        temp_index_kitten = input("Pe ce pozitie doresti sa pui cartea <<Exploding Kitten>>?\n")
+        temp_index_kitten = input(f"Pe ce pozitie doresti sa pui cartea <<Exploding Kitten>>? 1 - {len(deck.cards) + 1}\n")
+        while (int(temp_index_kitten) > (len(deck.cards) + 1)):
+            print("Nu sunt atatea carti in pachet!")
+            temp_index_kitten = input(f"Pe ce pozitie doresti sa pui cartea <<Exploding Kitten>>? 1 - {len(deck.cards) + 1}\n")
         final_index_kitten = len(deck.cards) - int(temp_index_kitten) + 1
         deck.cards.insert(final_index_kitten, kitten)
-        deck.show()
+        self.hand.pop()
         print("\n")
 
     def checkNope(self, game):
@@ -174,6 +177,9 @@ class Player():
                 return
 
     def playCard(self, deck, game):
+        if(len(self.hand) == 0):
+            print("Nu mai ai carti in mana!")
+            return
         initial_response = input("Doresti sa joci o carte? ")
         if initial_response in ('N', 'n', 'nu', 'Nu', 'NU'):
             return
@@ -334,7 +340,8 @@ class Player():
     def drawCard(self, deck):
         drawn_card = deck.draw()
         self.hand.append(drawn_card)
-        print(f"\nAi tras o carte de tipul <<{drawn_card.ctype}>>, cu numele <<{drawn_card.name}>>\n")
+        print(f"\nAi tras o carte de tipul <<{drawn_card.ctype}>>, ", sep = '')
+        print(f"cu numele <<{drawn_card.name}>>\n")
         j = 0
         if drawn_card.ctype == "Exploding Kitten":
             for card in self.hand:
@@ -342,7 +349,7 @@ class Player():
                     print(f"{self.name} a dezamorsat bomba!\n")
                     self.insertKitten(deck, drawn_card)
                     self.hand.pop(j)
-                    self.hand.pop()
+                    
                     return
                 j += 1
             print(f"{self.name} a explodat!\n\n")
@@ -400,7 +407,7 @@ class Game():
 
     def initPlayers(self):
         self.number_of_players = input("Cati jucatori sunt? (1-4)\n")
-        #self.number_of_players = prompt('Cati jucatori sunt? (1-4)\n')
+
         while int(self.number_of_players) > 4:
             print("Sunt prea multi jucatori!\n")
             self.number_of_players = input("Cati jucatori sunt? (1-4)\n")
